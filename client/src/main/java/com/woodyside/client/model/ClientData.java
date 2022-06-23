@@ -20,7 +20,6 @@ import javax.validation.constraints.Size;
 public class ClientData {
 
     @Size(min = 10, max = 25, message = "Client's name can not be longer than 25 symbols")
-
     private String firstName;
 
     @Size(min = 20, max = 40, message = "Client's last name can not be longer than 25 symbols")

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping(value = "api/v1")
+@RequestMapping(value = "api/v1/captcha")
 @AllArgsConstructor
 public class CaptchaController {
 

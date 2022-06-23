@@ -2,11 +2,15 @@ package com.woodyside.client.service;
 
 
 import com.woodyside.client.exception.ClientIsFraudException;
-import com.woodyside.client.exception.NoClientsFoundException;
+import com.woodyside.client.exception.EmailInUseException;
+import com.woodyside.client.exception.NoClientFoundException;
 import com.woodyside.client.model.Client;
 import com.woodyside.client.model.ClientAddress;
 import com.woodyside.client.model.ClientData;
 import com.woodyside.client.payload.request.ClientRegistrationRequest;
+import com.woodyside.client.payload.request.EmailInUserRequest;
+import com.woodyside.client.payload.response.ClientFoundByEmailResponse;
+import com.woodyside.client.payload.response.EmailInUseResponse;
 import com.woodyside.client.repository.ClientRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +26,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Optional;
+
+import static com.woodyside.client.util.DateResponseFormatter.getTimestamp;
 
 @Service
 @AllArgsConstructor
@@ -60,10 +67,28 @@ public class ClientCacheService {
         clientRepository.save(client);
     }
 
-    @Cacheable(value = "client", key = "#firstName")
-    public Client findClientByFirstName(String firstName) {
-        return clientRepository.findClientByFirstName(firstName)
-                 .orElseThrow(NoClientsFoundException::new);
+    public EmailInUseResponse ifClientEmailExists(String email) {
+        Boolean emailInUse = clientRepository.existsByClientData_Email(email);
+        if(emailInUse) {
+            throw new EmailInUseException();
+        }
+        return EmailInUseResponse.builder().emailInUse(false).success(true).timestamp(getTimestamp())
+                .build();
+    }
+
+    @Cacheable(value = "client", key = "#email")
+    public ClientFoundByEmailResponse findByClientEmail(String email) {
+        Optional<Client> clientFoundByEmail = Optional.ofNullable(clientRepository.findByClientData_Email(email)
+                .orElseThrow(NoClientFoundException::new));
+
+        return ClientFoundByEmailResponse.builder()
+                .firstName(clientFoundByEmail.get().getClientData().getFirstName())
+                .lastName(clientFoundByEmail.get().getClientData().getLastName())
+                .email(clientFoundByEmail.get().getClientData().getEmail())
+                .isFraudster(true)
+                .timestamp(getTimestamp())
+                .success(true)
+                .build();
     }
 
     @CacheEvict(allEntries = true, value = "client")
@@ -77,7 +102,4 @@ public class ClientCacheService {
         .format(zonedDateTime));
     }
 
-    public Boolean ifClientEmailExists(String email) {
-        return clientRepository.existsByClientData_Email(email);
-    }
 }

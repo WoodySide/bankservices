@@ -1,8 +1,9 @@
 package com.woodyside.client.controller;
 
-import com.woodyside.client.model.Client;
 import com.woodyside.client.payload.request.ClientRegistrationRequest;
+import com.woodyside.client.payload.response.ClientFoundByEmailResponse;
 import com.woodyside.client.payload.response.ClientRegistrationResponse;
+import com.woodyside.client.payload.response.EmailInUseResponse;
 import com.woodyside.client.service.ClientCacheService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -32,20 +33,13 @@ public class ClientController {
                         .build());
     }
 
-    @GetMapping(path = "checkEmailInUse")
-    public ResponseEntity<ClientRegistrationResponse> ifEmailExists(@RequestParam(value = "email") String email) {
-
-        Boolean emailExists = clientService.ifClientEmailExists(email);
-
-        return ResponseEntity.ok(ClientRegistrationResponse.builder()
-                .info("Email in use: " + emailExists)
-                .responseDate(LocalDateTime.now())
-                .success(true)
-                .build());
+    @GetMapping(value = "/{email}")
+    public ResponseEntity<ClientFoundByEmailResponse> findByEmail(@PathVariable(value = "email") String email) {
+        return ResponseEntity.ok(clientService.findByClientEmail(email));
     }
 
-    @GetMapping(path = "/{firstName}")
-    public ResponseEntity<Client> findByFirstName(@PathVariable(value = "firstName") String firstName) {
-        return ResponseEntity.ok(clientService.findClientByFirstName(firstName));
+    @GetMapping(path = "checkEmailInUse")
+    public ResponseEntity<EmailInUseResponse> ifEmailExists(@RequestParam(value = "email") String email) {
+        return ResponseEntity.ok(clientService.ifClientEmailExists(email));
     }
 }

@@ -10,8 +10,7 @@ import java.util.Optional;
 @Repository
 public interface ClientRepository extends JpaRepository<Client,Integer> {
 
-    @Query(value = "SELECT * FROM client_schema.client WHERE client_name=?1",nativeQuery = true)
-    Optional<Client> findClientByFirstName(String firstName);
-
     Boolean existsByClientData_Email(String email);
+
+    Optional<Client> findByClientData_Email(String email);
 }

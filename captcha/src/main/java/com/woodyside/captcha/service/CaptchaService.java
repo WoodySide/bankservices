@@ -8,6 +8,7 @@ import com.woodyside.captcha.payload.response.GenCaptchaResponseBody;
 import com.woodyside.captcha.repository.CaptchaRepository;
 import com.woodyside.captcha.util.CaptchaUtlCreator;
 import com.woodyside.captcha.util.UtilRandomStringGenerator;
+import com.woodyside.services.client.ClientService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +25,15 @@ public class CaptchaService {
 
     private final CaptchaRepository captchaRepository;
 
+    private final ClientService clientService;
 
     public GenCaptchaResponseBody genCaptchaId(GenCaptchaRequestBody genCaptchaRequest) {
-
+        clientService.findByEmail(genCaptchaRequest.getEmail());
         CaptchaEntity captcha = CaptchaEntity.builder()
                 .isUsed(false)
                 .validatedResult(false)
                 .captchaId(UtilRandomStringGenerator.generate())
-                .clientUsername(genCaptchaRequest.getClientUsername())
+                .clientUsername(genCaptchaRequest.getEmail())
                 .build();
 
         captchaRepository.save(captcha);
@@ -56,6 +58,7 @@ public class CaptchaService {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
 
         return String.valueOf(captcha.getImage());
     }
