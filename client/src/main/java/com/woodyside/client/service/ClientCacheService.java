@@ -8,8 +8,9 @@ import com.woodyside.client.model.Client;
 import com.woodyside.client.model.ClientAddress;
 import com.woodyside.client.model.ClientData;
 import com.woodyside.client.payload.request.ClientRegistrationRequest;
-import com.woodyside.client.payload.request.EmailInUserRequest;
+import com.woodyside.client.payload.request.ClientUpdateFraudulentStatusRequest;
 import com.woodyside.client.payload.response.ClientFoundByEmailResponse;
+import com.woodyside.client.payload.response.ClientUpdateFraudulentStatusResponse;
 import com.woodyside.client.payload.response.EmailInUseResponse;
 import com.woodyside.client.repository.ClientRepository;
 import lombok.AllArgsConstructor;
@@ -55,12 +56,8 @@ public class ClientCacheService {
                 .clientData(clientData)
                 .clientAddress(clientAddress)
                 .currentSum(BigDecimal.valueOf(1_0000 + Math.random() * 100_00_00))
-                .isFraudster(false)
+                .isFraudster(true)
                 .build();
-
-        if(client.getIsFraudster()) {
-            throw new ClientIsFraudException();
-        }
 
         log.info("========>     Check has processed successfully, registering client...\n\n");
 
@@ -74,6 +71,20 @@ public class ClientCacheService {
         }
         return EmailInUseResponse.builder().emailInUse(false).success(true).timestamp(getTimestamp())
                 .build();
+    }
+
+    public ClientUpdateFraudulentStatusResponse updateFraudsterStatus(ClientUpdateFraudulentStatusRequest request) {
+        Client found = clientRepository.findByClientData_Email(request.getEmail())
+                .orElseThrow(NoClientFoundException::new);
+        found.setIsFraudster(request.getIsFraudster());
+
+        ClientUpdateFraudulentStatusResponse response = ClientUpdateFraudulentStatusResponse.builder()
+                .isFraudster(request.getIsFraudster())
+                .timestamp(getTimestamp())
+                .build();
+
+        clientRepository.save(found);
+        return response;
     }
 
     @Cacheable(value = "client", key = "#email")

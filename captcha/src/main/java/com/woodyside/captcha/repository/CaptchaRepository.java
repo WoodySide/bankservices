@@ -9,5 +9,7 @@ import java.util.Optional;
 @Repository
 public interface CaptchaRepository extends JpaRepository<CaptchaEntity,Integer> {
 
+    Optional<CaptchaEntity> getCaptchaEntityByCaptchaId(String captchaId);
+
     Optional<CaptchaEntity> findByCaptchaId(String captchaId);
 }
