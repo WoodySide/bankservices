@@ -56,7 +56,7 @@ public class FraudService {
                 .isFraudster(validation_flag)
                 .build();
 
-        fraudRepository.save(fraudCheckHistory);
+        fraudRepository.insert(fraudCheckHistory);
 
         return IsFraudulentClientResponse.builder()
                 .info("Client has processed authorization check with a result:" + Objects.requireNonNull(found.getBody().getValidatedResult()))

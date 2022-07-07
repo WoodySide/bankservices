@@ -1,33 +1,31 @@
 package com.woodyside.fraud.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.*;
 
-@Entity(name = "FraudCheckHistory")
-@Table(name = "fraud_check_history")
 @Data
-@NoArgsConstructor
 @Builder
+@Document(value = "fraud_check_auth_history")
+@NoArgsConstructor
 @AllArgsConstructor
 public class FraudCheckHistory {
 
     @Id
-    @SequenceGenerator(
-            allocationSize = 1,
-            name = "fraud_check_history_sequence",
-            sequenceName = "fraud_check_history_sequence"
-    )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "fraud_check_history_sequence")
-    private Integer id;
+    @Field(value = "ID")
+    private String id;
 
-    @Column(name = "client_username")
+    @Field(name = "client_username")
+    @Indexed(unique = true)
     private String clientUsername;
 
-    @Column(name = "is_fraudster")
+    @Field(name = "is_fraudster")
     private Boolean isFraudster;
 }
