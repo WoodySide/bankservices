@@ -2,14 +2,19 @@ package com.woodyside.client.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.Objects;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @Entity(name = "ClientAddress")
 @Table(name = "client_address", schema = "client_schema")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -49,4 +54,17 @@ public class ClientAddress implements Serializable {
             fetch = FetchType.EAGER)
     @JsonBackReference
     private Client client;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        ClientAddress that = (ClientAddress) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

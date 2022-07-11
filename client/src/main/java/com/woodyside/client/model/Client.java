@@ -3,12 +3,16 @@ package com.woodyside.client.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.woodyside.client.model.audit.AuditModel;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
+
+import static lombok.AccessLevel.PRIVATE;
 
 
 @Entity(name = "Client")
@@ -61,4 +65,16 @@ public class Client extends AuditModel implements Serializable {
     @JsonManagedReference
     private ClientAddress clientAddress;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Client client = (Client) o;
+        return id != null && Objects.equals(id, client.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
