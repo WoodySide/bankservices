@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Objects;
 
 import static com.woodyside.fraud.util.DateResponseFormatter.getTimestamp;
@@ -64,4 +65,8 @@ public class FraudService {
                 .build();
     }
 
+    @PostConstruct
+    public void deleteAllData() {
+        fraudRepository.deleteAll();
+    }
 }

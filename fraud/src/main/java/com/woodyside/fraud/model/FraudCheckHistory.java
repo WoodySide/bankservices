@@ -16,7 +16,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter(PRIVATE)
 @ToString
 @Builder
-@Document(value = "fraud_check_auth_history")
+@Document(collection = "fraud_check_auth_history")
 @NoArgsConstructor
 @AllArgsConstructor
 public class FraudCheckHistory {

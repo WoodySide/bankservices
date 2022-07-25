@@ -15,6 +15,7 @@
         <module>services</module>
         <module>fraud</module>
         <module>apigw</module>
+        <module>notification</module>
     </modules>
 
     <properties>

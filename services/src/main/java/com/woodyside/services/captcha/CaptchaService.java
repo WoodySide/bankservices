@@ -8,8 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-
 @FeignClient(
         value = "captcha",
         path = "api/v1/captcha"
