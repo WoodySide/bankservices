@@ -27,9 +27,4 @@ public class NotificationService {
                         .build()
         );
     }
-
-    @PostConstruct
-    public void deleteAllData() {
-        notificationRepository.deleteAll();
-    }
 }

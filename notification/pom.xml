@@ -72,6 +72,16 @@
             <artifactId>twilio</artifactId>
             <version>8.8.0</version>
         </dependency>
+        <!--Amqp-->
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-amqp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.woodyside</groupId>
+            <artifactId>amqp</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>
