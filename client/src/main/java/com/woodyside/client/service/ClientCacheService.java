@@ -1,7 +1,7 @@
 package com.woodyside.client.service;
 
 
-import com.woodyside.amqp.producer.RabbitMQMessageProducer;
+import com.woodyside.amqp.RabbitMQMessageProducer;
 import com.woodyside.client.exception.EmailInUseException;
 import com.woodyside.client.exception.NoClientFoundException;
 import com.woodyside.client.model.Client;
@@ -13,6 +13,7 @@ import com.woodyside.client.payload.response.ClientFoundByEmailResponse;
 import com.woodyside.client.payload.response.ClientUpdateFraudulentStatusResponse;
 import com.woodyside.client.payload.response.EmailInUseResponse;
 import com.woodyside.client.repository.ClientRepository;
+import com.woodyside.services.notification.NotificationService;
 import com.woodyside.services.notification.payload.request.NotificationRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,7 +99,6 @@ public class ClientCacheService {
                     "internal.notification.routing-key"
             );
         }
-
         clientRepository.save(found);
         return response;
     }

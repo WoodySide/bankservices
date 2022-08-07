@@ -1,4 +1,4 @@
-package com.woodyside.amqp.config;
+package com.woodyside.amqp;
 
 
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.woodyside.amqp.producer;
+package com.woodyside.amqp;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
