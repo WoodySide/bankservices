@@ -1,4 +1,4 @@
-package com.woodyside.client.payload.response;
+package com.woodyside.services.client.payload.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

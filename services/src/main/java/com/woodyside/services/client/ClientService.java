@@ -1,7 +1,9 @@
 package com.woodyside.services.client;
 
+import com.woodyside.services.client.payload.request.ClientUpdateBalanceRequest;
 import com.woodyside.services.client.payload.request.ClientUpdateFraudulentStatusRequest;
 import com.woodyside.services.client.payload.response.ClientFoundByEmailResponse;
+import com.woodyside.services.client.payload.response.ClientUpdateBalanceResponse;
 import com.woodyside.services.client.payload.response.ClientUpdateFraudulentStatusResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -23,4 +25,7 @@ public interface ClientService {
 
     @PutMapping(path = "/updateFraudulentStatus", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ClientUpdateFraudulentStatusResponse> updateFraudulentStatus(@RequestBody ClientUpdateFraudulentStatusRequest request);
+
+    @PutMapping(path = "/updateBalance", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<ClientUpdateBalanceResponse> updateClientBalance(@RequestBody ClientUpdateBalanceRequest request);
 }

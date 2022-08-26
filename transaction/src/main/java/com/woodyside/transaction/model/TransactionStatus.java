@@ -1,4 +1,4 @@
-package com.woodyside.transaction.model.transaction_mode;
+package com.woodyside.transaction.model;
 
 public enum TransactionStatus {
     NEW,

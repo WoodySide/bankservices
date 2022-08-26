@@ -1,4 +1,4 @@
-package com.woodyside.client.payload.request;
+package com.woodyside.services.client.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

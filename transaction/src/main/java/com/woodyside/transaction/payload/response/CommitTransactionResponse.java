@@ -1,5 +1,6 @@
 package com.woodyside.transaction.payload.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,8 @@ import java.math.BigDecimal;
 @Data
 @Builder
 @NoArgsConstructor
-public class WithdrawMoneyResponse {
-
-    private BigDecimal currentBalance;
+@AllArgsConstructor
+public class CommitTransactionResponse {
 
     private String info;
 

@@ -8,27 +8,17 @@ import com.woodyside.client.model.Client;
 import com.woodyside.client.model.ClientAddress;
 import com.woodyside.client.model.ClientData;
 import com.woodyside.client.payload.request.ClientRegistrationRequest;
+import com.woodyside.client.payload.response.*;
 import com.woodyside.client.payload.request.ClientUpdateFraudulentStatusRequest;
-import com.woodyside.client.payload.response.ClientFoundByEmailResponse;
-import com.woodyside.client.payload.response.ClientUpdateFraudulentStatusResponse;
-import com.woodyside.client.payload.response.EmailInUseResponse;
+import com.woodyside.client.payload.request.ClientUpdateBalanceRequest;
 import com.woodyside.client.repository.ClientRepository;
-import com.woodyside.services.notification.NotificationService;
+import com.woodyside.client.util.DateResponseFormatter;
 import com.woodyside.services.notification.payload.request.NotificationRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.Optional;
 
 import static com.woodyside.client.util.DateResponseFormatter.getTimestamp;
@@ -63,7 +53,7 @@ public class ClientCacheService {
                 .isFraudster(true)
                 .build();
 
-        log.info("========>     Check has processed successfully, registering client...\n\n");
+        log.info("========>    Registering client...\n\n");
 
         clientRepository.save(client);
     }
@@ -74,6 +64,20 @@ public class ClientCacheService {
             throw new EmailInUseException();
         }
         return EmailInUseResponse.builder().emailInUse(false).success(true).timestamp(getTimestamp())
+                .build();
+    }
+
+    public ClientUpdateBalanceResponse updateBalanceResponse(ClientUpdateBalanceRequest updateStatusRequest) {
+        Client clientFoundByEmail = clientRepository.findByClientData_Email(updateStatusRequest.getEmail())
+                .orElseThrow(NoClientFoundException::new);
+
+        clientFoundByEmail.setCurrentSum(updateStatusRequest.getCurrentSum());
+
+        clientRepository.save(clientFoundByEmail);
+
+        return ClientUpdateBalanceResponse.builder()
+                .info("Client's balance was updated")
+                .date(DateResponseFormatter.getTimestamp())
                 .build();
     }
 
@@ -95,7 +99,7 @@ public class ClientCacheService {
                     .build();
             messageProducer.publish(
                     notificationRequest,
-                    "internal.exchange",
+                     "internal.exchange",
                     "internal.notification.routing-key"
             );
         }
@@ -103,29 +107,18 @@ public class ClientCacheService {
         return response;
     }
 
-    @Cacheable(value = "client", key = "#email")
     public ClientFoundByEmailResponse findByClientEmail(String email) {
         Optional<Client> clientFoundByEmail = Optional.ofNullable(clientRepository.findByClientData_Email(email)
                 .orElseThrow(NoClientFoundException::new));
-
         return ClientFoundByEmailResponse.builder()
+                .id(clientFoundByEmail.get().getId())
                 .firstName(clientFoundByEmail.get().getClientData().getFirstName())
                 .lastName(clientFoundByEmail.get().getClientData().getLastName())
                 .email(clientFoundByEmail.get().getClientData().getEmail())
-                .isFraudster(true)
+                .currentBalance(clientFoundByEmail.get().getCurrentSum())
+                .isFraudster(clientFoundByEmail.get().getIsFraudster())
                 .timestamp(getTimestamp())
                 .success(true)
                 .build();
-    }
-
-    @CacheEvict(allEntries = true, value = "client")
-    @Scheduled(fixedRate = 3600000, initialDelay = 3600000)
-    public void deleteAndEvictCache() {
-        LocalDate anotherSummerDay = LocalDate.now();
-        LocalTime anotherTime = LocalTime.now();
-        ZonedDateTime zonedDateTime = ZonedDateTime
-                .of(anotherSummerDay, anotherTime, ZoneId.of("Europe/Moscow"));
-        log.info("Clearing cache, time: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG)
-        .format(zonedDateTime));
     }
 }
