@@ -1,7 +1,7 @@
 package com.woodyside.client.model.audit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -11,7 +11,10 @@ import java.util.Date;
 
 @MappedSuperclass
 @EntityListeners(value = AuditingEntityListener.class)
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class AuditModel {
 
     private static final long serialVersionUUID = 1L;

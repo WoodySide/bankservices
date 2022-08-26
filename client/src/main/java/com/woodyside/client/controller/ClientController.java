@@ -1,11 +1,10 @@
 package com.woodyside.client.controller;
 
 import com.woodyside.client.payload.request.ClientRegistrationRequest;
+import com.woodyside.client.payload.request.ClientUpdateBalanceRequest;
+import com.woodyside.client.payload.response.ClientUpdateBalanceResponse;
 import com.woodyside.client.payload.request.ClientUpdateFraudulentStatusRequest;
-import com.woodyside.client.payload.response.ClientFoundByEmailResponse;
-import com.woodyside.client.payload.response.ClientRegistrationResponse;
-import com.woodyside.client.payload.response.ClientUpdateFraudulentStatusResponse;
-import com.woodyside.client.payload.response.EmailInUseResponse;
+import com.woodyside.client.payload.response.*;
 import com.woodyside.client.service.ClientCacheService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -49,5 +48,10 @@ public class ClientController {
     public ResponseEntity<ClientUpdateFraudulentStatusResponse> updateFraudulentStatus(@RequestBody ClientUpdateFraudulentStatusRequest request)  {
         ClientUpdateFraudulentStatusResponse response = clientService.updateFraudsterStatus(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(path = "/updateBalance", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ClientUpdateBalanceResponse> updateClientBalance(@RequestBody ClientUpdateBalanceRequest request) {
+        return ResponseEntity.ok(clientService.updateBalanceResponse(request));
     }
 }

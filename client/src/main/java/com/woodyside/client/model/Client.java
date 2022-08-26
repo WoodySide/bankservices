@@ -46,7 +46,7 @@ public class Client extends AuditModel implements Serializable {
 
     @Column(name = "CURRENT_SUM")
     @Max(value = 1_000_000, message = "Current sum should not be greater than 1_000_000")
-    @Min(value = 100, message = "Current sum should not be greater than 100")
+    @Min(value = 0, message = "Current sum should not be greater than 100")
     private BigDecimal currentSum;
 
     @Embedded
