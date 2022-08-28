@@ -7,8 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(
         scanBasePackages = {
                 "com.woodyside.amqp",
-                "com.woodyside.transaction",
-                "com.woodyside.client"
+                "com.woodyside.transaction"
         }
 )
 public class TransactionApplication {

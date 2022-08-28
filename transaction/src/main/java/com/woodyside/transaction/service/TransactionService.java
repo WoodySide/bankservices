@@ -1,13 +1,11 @@
 package com.woodyside.transaction.service;
 
-
 import com.woodyside.amqp.RabbitMQMessageProducer;
-import com.woodyside.client.exception.ClientIsFraudException;
-import com.woodyside.client.util.DateResponseFormatter;
 import com.woodyside.services.client.ClientService;
 import com.woodyside.services.client.payload.request.ClientUpdateBalanceRequest;
 import com.woodyside.services.client.payload.response.ClientFoundByEmailResponse;
 import com.woodyside.services.notification.payload.request.NotificationRequest;
+import com.woodyside.transaction.exception.NoTransactionPossibleException;
 import com.woodyside.transaction.model.Transaction;
 import com.woodyside.transaction.payload.request.CommitTransactionRequest;
 import com.woodyside.transaction.payload.response.CommitTransactionResponse;
@@ -22,6 +20,7 @@ import java.math.BigDecimal;
 import static com.woodyside.transaction.model.TransactionKind.REPLENISHMENT;
 import static com.woodyside.transaction.model.TransactionKind.WITHDRAWING;
 import static com.woodyside.transaction.model.TransactionStatus.CONFIRMED;
+import static com.woodyside.transaction.util.DateResponseFormatter.getTimestamp;
 
 @Service
 @AllArgsConstructor
@@ -68,11 +67,13 @@ public class TransactionService {
                         "internal.exchange",
                         "internal.notification.routing-key"
                 );
-            }
+            } else {
+            throw new NoTransactionPossibleException();
+        }
 
        return CommitTransactionResponse.builder()
                .info("There was money withdrawing got detected by: " + request.getClientUsername())
-               .date(DateResponseFormatter.getTimestamp())
+               .date(getTimestamp())
                .build();
     }
 
@@ -111,11 +112,13 @@ public class TransactionService {
                     "internal.exchange",
                     "internal.notification.routing-key"
             );
+        } else {
+            throw new NoTransactionPossibleException();
         }
 
         return CommitTransactionResponse.builder()
                 .info("There was money replenishment got detected by: " + request.getClientUsername())
-                .date(DateResponseFormatter.getTimestamp())
+                .date(getTimestamp())
                 .build();
 
         }
@@ -126,12 +129,12 @@ public class TransactionService {
                 clientService.findByEmail(username);
 
         if(foundByEmail.getBody().getIsFraudster()) {
-            throw new ClientIsFraudException();
+            throw new NoTransactionPossibleException();
         }
 
         return ShowCurrentClientBalanceResponse.builder()
                 .currentBalance(foundByEmail.getBody().getCurrentBalance())
-                .date(DateResponseFormatter.getTimestamp())
+                .date(getTimestamp())
                 .build();
     }
 }
